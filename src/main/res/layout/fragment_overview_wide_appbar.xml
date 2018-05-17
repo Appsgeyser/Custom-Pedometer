@@ -1,0 +1,159 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activity_Main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:id="@+id/topPanel"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight=".40"
+            android:layout_height="match_parent"
+            android:id="@+id/stepsInfo"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/steps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="10.000"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/unit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/steps"
+                android:gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/totalInfo"
+            android:layout_width="0dp"
+            android:layout_weight=".40"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:text="@string/total" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/averageInfo"
+            android:layout_width="0dp"
+            android:layout_weight=".40"
+            android:layout_height="match_parent"
+
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/average"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:text="@string/average" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/topPanel"
+        android:id="@+id/graphPanel">
+
+        <org.eazegraph.lib.charts.PieChart
+            xmlns:eaze="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            eaze:egLegendHeight="0dp"
+            eaze:egInnerPadding="75"
+            eaze:egHighlightStrength="1"
+            android:visibility="gone"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/mpPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/steps_graph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:layout_below="@+id/topPanel"
+        android:gravity="center"
+        android:textSize="45sp"
+        android:text="10.000"/>
+
+    <TextView
+        android:id="@+id/unit_graph"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/steps_graph"
+        android:layout_centerHorizontal="true"
+        android:text="@string/steps"
+        android:textSize="20sp"/>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/graphPanel">
+
+        <include layout="@layout/steps_chart"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="@string/dataNotice"
+            android:id="@+id/dataNotice"/>
+    </FrameLayout>
+
+</RelativeLayout>

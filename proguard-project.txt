@@ -1,2 +1,38 @@
--renamesourcefileattribute SourceFile    
--keepattributes SourceFile,LineNumberTable
+####################################################################################################
+####################################################################################################
+####################################################################################################
+######################################### PROGUARD #################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
+-ignorewarnings
+
+# Fyber Mediation
+-dontwarn com.fyber.mediation.annotations.MediationAPI
+-keepattributes JavascriptInterface
+-keep class android.webkit.JavascriptInterface
+-keep class com.fyber.mediation.MediationConfigProvider {
+  public static *;
+}
+-keep class com.fyber.mediation.MediationAdapterStarter {
+  public static *;
+}
+-keepclassmembers class com.fyber.ads.videos.mediation.RewardedVideoMediationJSInterface {
+  void setValue(java.lang.String);
+}
+
+#Appnext
+-keep class com.appnext.** { *; }
+-dontwarn com.appnext.**
+
+-dontwarn com.onesignal.**
+-dontwarn org.apache.**
+-dontwarn antlr.**
+-dontwarn okio.**
+-dontwarn com.squareup.okhttp.**
+-dontwarn com.inmobi.**
+-dontwarn com.moat.**
+
+#com.yandex.metrica
+-keep class com.yandex.** { *; }
+-dontwarn com.yandex.**

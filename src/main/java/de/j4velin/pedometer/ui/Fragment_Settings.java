@@ -26,13 +26,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceFragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,7 +44,11 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.appsgeyser.sdk.AppsgeyserSDK;
+import com.appsgeyser.sdk.configuration.Constants;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -52,23 +59,26 @@ import java.io.IOException;
 import java.util.Locale;
 
 import de.j4velin.pedometer.Database;
+import de.j4velin.pedometer.PedometerApp;
 import de.j4velin.pedometer.PowerReceiver;
 import de.j4velin.pedometer.R;
 import de.j4velin.pedometer.SensorListener;
+import de.j4velin.pedometer.config.Config;
 import de.j4velin.pedometer.util.API23Wrapper;
 import de.j4velin.pedometer.util.PlaySettingsWrapper;
 
-public class Fragment_Settings extends PreferenceFragment implements OnPreferenceClickListener {
+public class Fragment_Settings extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
     final static int DEFAULT_GOAL = 10000;
     final static float DEFAULT_STEP_SIZE = Locale.getDefault() == Locale.US ? 2.5f : 75f;
     final static String DEFAULT_STEP_UNIT = Locale.getDefault() == Locale.US ? "ft" : "cm";
+    private Config config;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.settings);
+        /*addPreferencesFromResource(R.xml.settings);
         findPreference("import").setOnPreferenceClickListener(this);
         findPreference("export").setOnPreferenceClickListener(this);
 
@@ -117,8 +127,70 @@ public class Fragment_Settings extends PreferenceFragment implements OnPreferenc
         stepsize.setSummary(getString(R.string.step_size_summary,
                 prefs.getFloat("stepsize_value", DEFAULT_STEP_SIZE),
                 prefs.getString("stepsize_unit", DEFAULT_STEP_UNIT)));
-
+*/
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.settings, rootKey);
+        config = ((PedometerApp) getActivity().getApplication()).getConfig();
+
+
+        MyCheckboxPreference notification = (MyCheckboxPreference) findPreference("notification");
+        notification
+                .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(final Preference preference,
+                                                      final Object newValue) {
+                        getActivity().getSharedPreferences("pedometer", Context.MODE_PRIVATE).edit()
+                                .putBoolean("notification", (Boolean) newValue).commit();
+
+                        getActivity().startService(new Intent(getActivity(), SensorListener.class)
+                                .putExtra(SensorListener.ACTION_UPDATE_NOTIFICATION, true));
+                        return true;
+                    }
+                });
+        notification.setTextColor(config.getTextColor());
+        notification.setCheckboxColor(config.getAccentColor());
+
+        MyCheckboxPreference pauseOnPower = (MyCheckboxPreference) findPreference("pause_on_power");
+        pauseOnPower
+                .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(final Preference preference,
+                                                      final Object newValue) {
+                        getActivity().getPackageManager().setComponentEnabledSetting(
+                                new ComponentName(getActivity(), PowerReceiver.class),
+                                ((Boolean) newValue) ?
+                                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                                PackageManager.DONT_KILL_APP);
+                        return true;
+                    }
+                });
+        pauseOnPower.setTextColor(config.getTextColor());
+        pauseOnPower.setCheckboxColor(config.getAccentColor());
+
+        final SharedPreferences prefs =
+                getActivity().getSharedPreferences("pedometer", Context.MODE_PRIVATE);
+
+        MyPreference goal = (MyPreference) findPreference("goal");
+        goal.setOnPreferenceClickListener(this);
+        goal.setSummary(getString(R.string.goal_summary, prefs.getInt("goal", DEFAULT_GOAL)));
+        goal.setTextColor(config.getTextColor());
+
+        MyPreference stepsize = (MyPreference) findPreference("stepsize");
+        stepsize.setOnPreferenceClickListener(this);
+        stepsize.setSummary(getString(R.string.step_size_summary,
+                prefs.getFloat("stepsize_value", DEFAULT_STEP_SIZE),
+                prefs.getString("stepsize_unit", DEFAULT_STEP_UNIT)));
+        stepsize.setTextColor(config.getTextColor());
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.settings);
+
+        MyPreference license = (MyPreference) findPreference("license");
+        license.setOnPreferenceClickListener(this);
+        license.setTextColor(config.getTextColor());
     }
 
     @Override
@@ -130,20 +202,53 @@ public class Fragment_Settings extends PreferenceFragment implements OnPreferenc
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        if(config.getNavigation().equals(Config.Navigation.MENU.getName())) {
+            ((Activity_Main) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        if (config.getNavigation().equals(Config.Navigation.DRAWER.getName())) {
+            inflater.inflate(R.menu.main_menu_drawer, menu);
+        } else if (config.getNavigation().equals(Config.Navigation.TABS.getName())) {
+            inflater.inflate(R.menu.tabs_menu, menu);
+        } else {
+            inflater.inflate(R.menu.main, menu);
+            if(config.getAchievementList().size() == 0) {
+                MenuItem achievements = menu.findItem(R.id.action_achievements);
+                achievements.setVisible(false);
+            }else  {
+                Drawable d = getResources().getDrawable(R.drawable.trophy);
+                MenuItem achievements = menu.findItem(R.id.action_achievements);
+                d.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                achievements.setIcon(d);
+            }
+        }
+
     }
 
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_settings).setVisible(false);
+        if(config.getNavigation().equals(Config.Navigation.MENU.getName())){
+            menu.findItem(R.id.action_settings).setVisible(false);
+            menu.findItem(R.id.action_split_count).setVisible(false);
+            config.isAboutEnabled(getActivity(), new AppsgeyserSDK.OnAboutDialogEnableListener() {
+                @Override
+                public void onDialogEnableReceived(boolean enabled) {
+                    menu.findItem(R.id.action_about).setVisible(enabled);
+                }
+            });
+            if(config.getTipsList().size() == 0) {
+                menu.findItem(R.id.tips).setVisible(false);
+            }
+        }
+        if(config.getNavigation().equals(Config.Navigation.TABS.getName())){
+            menu.findItem(R.id.action_split_count).setVisible(false);
+        }
         menu.findItem(R.id.action_pause).setVisible(false);
-        menu.findItem(R.id.action_split_count).setVisible(false);
+
     }
 
     @Override
@@ -157,8 +262,8 @@ public class Fragment_Settings extends PreferenceFragment implements OnPreferenc
         View v;
         final SharedPreferences prefs =
                 getActivity().getSharedPreferences("pedometer", Context.MODE_PRIVATE);
-        switch (preference.getTitleRes()) {
-            case R.string.goal:
+        switch (preference.getKey()) {
+            case "goal":
                 builder = new AlertDialog.Builder(getActivity());
                 final NumberPicker np = new NumberPicker(getActivity());
                 np.setMinValue(1);
@@ -188,7 +293,7 @@ public class Fragment_Settings extends PreferenceFragment implements OnPreferenc
                         WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 dialog.show();
                 break;
-            case R.string.step_size:
+            case  "stepsize":
                 builder = new AlertDialog.Builder(getActivity());
                 v = getActivity().getLayoutInflater().inflate(R.layout.stepsize, null);
                 final RadioGroup unit = (RadioGroup) v.findViewById(R.id.unit);
@@ -225,22 +330,22 @@ public class Fragment_Settings extends PreferenceFragment implements OnPreferenc
                 });
                 builder.create().show();
                 break;
-            case R.string.import_title:
-            case R.string.export_title:
-                if (hasWriteExternalPermission()) {
-                    if (preference.getTitleRes() == R.string.import_title) {
-                        importCsv();
-                    } else {
-                        exportCsv();
-                    }
-                } else if (Build.VERSION.SDK_INT >= 23) {
-                    API23Wrapper.requestPermission(getActivity(),
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE});
-                } else {
-                    Toast.makeText(getActivity(), R.string.permission_external_storage,
-                            Toast.LENGTH_SHORT).show();
-                }
-                break;
+            case "license":
+                AlertDialog.Builder aboutBuilder = new AlertDialog.Builder(getActivity());
+                aboutBuilder.setTitle(R.string.about);
+                TextView tv = new TextView(getActivity());
+                tv.setPadding(10, 10, 10, 10);
+                tv.setText(R.string.about_text_links);
+                tv.setMovementMethod(LinkMovementMethod.getInstance());
+                aboutBuilder.setView(tv);
+                aboutBuilder.setPositiveButton(android.R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(final DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                aboutBuilder.create().show();
         }
         return false;
     }

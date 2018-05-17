@@ -12,7 +12,6 @@
     <string name="error_file">Errore nell\'accedere al file: %s</string>
     <string name="about">Info</string>
     <string name="achievements">Risultati</string>
-    <string name="about_text_links">Quest\'app è stata creata da Thomas Hoffmann (<a href="https://www.j4velin.de">www.j4velin.de</a>) e si serve <a href="https://github.com/blackfizz/EazeGraph">EazeGraph</a> by Paul Cech and <a href="https://github.com/attenzione/android-ColorPickerPreference">ColorPickerPreference</a> by Sergey Margaritov.\n\nPedometro è open source! Trovi il codice e la lista di chi ha contribuito qui <a href="https://github.com/j4velin/Pedometer">GitHub</a>.\n\n (</string>
     <string name="export_summary">Salva i tuoi dati in un file .csv</string>
     <string name="export_title">Esporta/Backup</string>
     <string name="faq">FAQ</string>

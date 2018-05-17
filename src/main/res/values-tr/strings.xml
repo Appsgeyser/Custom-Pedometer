@@ -54,15 +54,6 @@
     <string name="average_this_month">Bu ayın ortalaması</string>
     <string name="file_already_exists">Dosya zaten var. Üzerine yazmak istediğinize emin misiniz?
     </string>
-    <string name="about_text_links">Bu uygulama Thomas Hoffmann tarafından oluşturulmuştur (<a
-        href="https://www.j4velin.de">www.j4velin.de</a>) ve Paul Cech tarafından oluşturulan <a
-        href="https://github.com/blackfizz/EazeGraph">EazeGraph
-    </a> ve Sergey Margaritov tarafından oluşturulan <a
-        href="https://github.com/attenzione/android-ColorPickerPreference">ColorPickerPreference
-    </a> yazılımlarından yararlanır.\n\nPedometer açık kaynaktır! Kodun ve katkıcıların tümüne <a
-        href="https://github.com/j4velin/Pedometer">GitHub
-    </a> konumundan erişin.
-    </string>
     <string name="about_app_version">Uygulama sürümü: %s</string>
     <string name="since">%s tarihinden beri</string>
     <string name="start">Başlat</string>

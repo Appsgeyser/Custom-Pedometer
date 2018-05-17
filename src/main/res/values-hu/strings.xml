@@ -54,15 +54,6 @@
     <string name="total_this_month">E hónapi összesen</string>
     <string name="average_this_month">E hónap átlaga</string>
     <string name="file_already_exists">A fájl már létezik. Biztos benne, hogy felülírja?</string>
-    <string name="about_text_links">Ezt a programot Thomas Hoffmann készítette (<a
-        href="https://www.j4velin.de">www.j4velin.de</a>) és felhasználja:<a
-        href="https://github.com/blackfizz/EazeGraph">az EazeGraph-ot
-    </a> Paul Cech-től és <a href="https://github.com/attenzione/android-ColorPickerPreference">a
-        ColorPickerPreference programot
-    </a> Sergey Margaritov-tól.\n\nA Pedometer nyílt forráskódú program! A forráskódot és a
-        közreműködők teljes listáját itt találod: <a href="https://github.com/j4velin/Pedometer">
-            GitHub</a>.
-    </string>
     <string name="about_app_version">App verzió: %s</string>
     <string name="since">%s óta</string>
     <string name="start">Indít</string>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/overview"
+            android:title="@string/overview"
+            android:icon="@drawable/ic_insert_chart_black_24dp"/>
+        <item
+            android:id="@+id/action_settings"
+            android:title="@string/settings"
+            android:icon="@drawable/ic_settings_black_24dp"/>
+        <item
+            android:id="@+id/action_achievements"
+            android:title="@string/achievements"
+            android:icon="@drawable/trophy"/>
+        <item
+            android:id="@+id/tips"
+            android:title="@string/useful_tips"
+            android:icon="@drawable/ic_lightbulb_outline_black_24dp"/>
+        <item
+            android:id="@+id/action_split_count"
+            android:title="@string/split_count"
+            android:icon="@drawable/ic_call_split_black_24dp"/>
+        <item
+            android:id="@+id/action_about"
+            android:icon="@drawable/ic_info_outline_black_24dp"
+            android:title="@string/about" />
+    </group>
+</menu>

@@ -1,0 +1,87 @@
+{
+  "background": {
+    "background": "backgroundImage",
+    "backgroundImage": "uploaded_data\/crop5af95ca52af57.jpg",
+    "backgroundColor": "1f8c7f"
+  },
+  "textColor": "5ef2af",
+  "usefulTips": [
+    {
+      "tipsName": "How to run faster?",
+      "tipsUrl": "https:\/\/www.runnersworld.com\/the-starting-line\/run-faster"
+    },
+    {
+      "tipsName": "Cardio vs. Weights",
+      "tipsUrl": "http:\/\/www.jog-blog.co.uk\/2018\/02\/28\/cardio-versus-weights-whats-right-balance\/"
+    },
+    {
+      "tipsName": "How a healthy diet can improve your productivity",
+      "tipsUrl": "https:\/\/yourstory.com\/2016\/06\/healthy-diet-improve-productivity\/"
+    },
+    {
+      "tipsName": "How Your State of Mind Affects Your Performance",
+      "tipsUrl": "https:\/\/hbr.org\/2014\/12\/how-your-state-of-mind-affects-your-performance"
+    }
+  ],
+  "navigationRandom": {
+    "navigation": "drawer"
+  },
+  "drawerBackgroundImage": "uploaded_data\/crop5af9668f42678.jpg",
+  "drawerIcon": "uploaded_data\/crop5af966a39ffd2.png",
+  "layoutRandom": {
+    "layout": "appbarLayout"
+  },
+  "stepsChartRandom": {
+    "stepsChart": "mpBars",
+    "stepsChartColorSteps": "67e08d",
+    "stepsChartColorGoal": "d2eb52"
+  },
+  "pieChartRandom": {
+    "pieChart": "basicPie",
+    "pieStepsColor": "7cdeb4",
+    "pieGoalColor": "98a3e3"
+  },
+  "progressWidthRandom": {
+    "progressWidth": "thick"
+  },
+
+  "achievementLockedImage": "uploaded_data\/crop5af96a56370a0.jpg",
+  "achievements": [
+    {
+      "achievementName": "Baby",
+      "achievementDescription": "Walk first 100 Steps to unlock this achive",
+      "achievementImage": "uploaded_data\/crop5af96b0b8ee83.png",
+      "stepsType": "stepsTotal",
+      "achievementValue": "100"
+    },
+    {
+      "achievementName": "Tenager",
+      "achievementDescription": "Walk 1000 steps to unlock",
+      "achievementImage": "uploaded_data\/crop5af96b2ea31db.png",
+      "stepsType": "stepsDaily",
+      "achievementValue": "1000"
+    },
+    {
+      "achievementName": "One by One",
+      "achievementDescription": "Walk 1010 steps to unlock",
+      "achievementImage": "uploaded_data\/crop5af96b6b40871.png",
+      "stepsType": "stepsDaily",
+      "achievementValue": "1010"
+    },
+    {
+      "achievementName": "Greate job",
+      "achievementDescription": "Walk 3010 steps to unlock",
+      "achievementImage": "uploaded_data\/crop5af96b642c75d.png",
+      "stepsType": "stepsDaily",
+      "achievementValue": "3010"
+    }
+  ],
+  "name": "Fitness counter",
+  "template": "pedometer",
+  "icon": "uploaded_data\/icon.png",
+  "themeColors": {
+    "colorPrimary": "#009688",
+    "colorPrimaryDark": "#004d40",
+    "colorAccent": "#00bfa5"
+  }
+}

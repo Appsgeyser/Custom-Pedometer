@@ -16,7 +16,7 @@
 package de.j4velin.pedometer.util;
 
 import android.os.Bundle;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
 
 import de.j4velin.pedometer.ui.Activity_Main;
 

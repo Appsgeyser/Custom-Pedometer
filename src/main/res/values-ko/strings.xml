@@ -45,7 +45,6 @@
     <string name="total_this_month">이번달 합계</string>
     <string name="average_this_month">이번달 평균</string>
     <string name="file_already_exists">파일이 이미 존재합니다. 덮어쓸까요?</string>
-    <string name="about_text_links">제작자는 Thomas Hoffmann (<a href="https://www.j4velin.de">www.j4velin.de</a>)이며 <a href="https://github.com/blackfizz/EazeGraph">EazeGraph</a> by Paul Cech 그리고 <a href="https://github.com/attenzione/android-ColorPickerPreference">ColorPickerPreference</a> by Sergey Margaritov 가 사용되었습니다.\n\nPedometer는 소스 코드가 공개되어 있습니다! 소스 코드와 모든 기여자들을 다음에서 확인하세요.<a href="https://github.com/j4velin/Pedometer">GitHub</a>.\n\n</string>
     <string name="about_app_version">앱 버전: %s</string>
     <string name="since">%s 이후로</string>
     <string name="start">시작</string>

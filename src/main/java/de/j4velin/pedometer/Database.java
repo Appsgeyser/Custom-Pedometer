@@ -205,6 +205,21 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
+     * Get the total of steps taken without today's value
+     *
+     * @return number of steps taken, ignoring today
+     */
+    public int getTotal() {
+        Cursor c = getReadableDatabase()
+                .query(DB_NAME, new String[]{"SUM(steps)"}, "steps > 0",
+                        new String[]{}, null, null, null);
+        c.moveToFirst();
+        int re = c.getInt(0);
+        c.close();
+        return re;
+    }
+
+    /**
      * Get the maximum of steps walked in one day
      *
      * @return the maximum number of steps walked in one day

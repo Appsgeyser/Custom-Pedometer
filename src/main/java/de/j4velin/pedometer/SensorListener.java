@@ -29,13 +29,19 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
+import android.util.Log;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 
 import de.j4velin.pedometer.ui.Activity_Main;
 import de.j4velin.pedometer.util.Logger;
+import de.j4velin.pedometer.util.SensorFilter;
 import de.j4velin.pedometer.util.Util;
 import de.j4velin.pedometer.widget.WidgetUpdateService;
 
@@ -51,7 +57,7 @@ public class SensorListener extends Service implements SensorEventListener {
     private final static int NOTIFICATION_ID = 1;
     private final static long MICROSECONDS_IN_ONE_MINUTE = 60000000;
     private final static long SAVE_OFFSET_TIME = AlarmManager.INTERVAL_HOUR;
-    private final static int SAVE_OFFSET_STEPS = 500;
+    private final static int SAVE_OFFSET_STEPS = 50;
 
     public final static String ACTION_PAUSE = "pause";
 
@@ -59,6 +65,8 @@ public class SensorListener extends Service implements SensorEventListener {
     private static int lastSaveSteps;
     private static long lastSaveTime;
 
+    Sensor countsensor;
+    Sensor as;
 
     public final static String ACTION_UPDATE_NOTIFICATION = "updateNotificationState";
 
@@ -69,13 +77,78 @@ public class SensorListener extends Service implements SensorEventListener {
         if (BuildConfig.DEBUG) Logger.log(sensor.getName() + " accuracy changed: " + accuracy);
     }
 
+
+    private static final int ACCEL_RING_SIZE = 50;
+    private static final int VEL_RING_SIZE = 10;
+
+    // change this threshold according to your sensitivity preferences
+    private static final float STEP_THRESHOLD = 50f;
+
+    private static final int STEP_DELAY_NS = 250000000;
+
+    private int accelRingCounter = 0;
+    private float[] accelRingX = new float[ACCEL_RING_SIZE];
+    private float[] accelRingY = new float[ACCEL_RING_SIZE];
+    private float[] accelRingZ = new float[ACCEL_RING_SIZE];
+    private int velRingCounter = 0;
+    private float[] velRing = new float[VEL_RING_SIZE];
+    private long lastStepTimeNs = 0;
+    private float oldVelocityEstimate = 0;
+
+    public void updateAccel(long timeNs, float x, float y, float z) {
+        float[] currentAccel = new float[3];
+        currentAccel[0] = x;
+        currentAccel[1] = y;
+        currentAccel[2] = z;
+
+        // First step is to update our guess of where the global z vector is.
+        accelRingCounter++;
+        accelRingX[accelRingCounter % ACCEL_RING_SIZE] = currentAccel[0];
+        accelRingY[accelRingCounter % ACCEL_RING_SIZE] = currentAccel[1];
+        accelRingZ[accelRingCounter % ACCEL_RING_SIZE] = currentAccel[2];
+
+        float[] worldZ = new float[3];
+        worldZ[0] = SensorFilter.sum(accelRingX) / Math.min(accelRingCounter, ACCEL_RING_SIZE);
+        worldZ[1] = SensorFilter.sum(accelRingY) / Math.min(accelRingCounter, ACCEL_RING_SIZE);
+        worldZ[2] = SensorFilter.sum(accelRingZ) / Math.min(accelRingCounter, ACCEL_RING_SIZE);
+
+        float normalization_factor = SensorFilter.norm(worldZ);
+
+        worldZ[0] = worldZ[0] / normalization_factor;
+        worldZ[1] = worldZ[1] / normalization_factor;
+        worldZ[2] = worldZ[2] / normalization_factor;
+
+        float currentZ = SensorFilter.dot(worldZ, currentAccel) - normalization_factor;
+        velRingCounter++;
+        velRing[velRingCounter % VEL_RING_SIZE] = currentZ;
+
+        float velocityEstimate = SensorFilter.sum(velRing);
+
+        if (velocityEstimate > STEP_THRESHOLD && oldVelocityEstimate <= STEP_THRESHOLD
+                && (timeNs - lastStepTimeNs > STEP_DELAY_NS)) {
+            steps++;
+            updateIfNecessary();
+            lastStepTimeNs = timeNs;
+        }
+        oldVelocityEstimate = velocityEstimate;
+    }
+
     @Override
     public void onSensorChanged(final SensorEvent event) {
         if (event.values[0] > Integer.MAX_VALUE) {
             if (BuildConfig.DEBUG) Logger.log("probably not a real value: " + event.values[0]);
             return;
         } else {
-            steps = (int) event.values[0];
+            final float[] values = event.values;
+            final Sensor sensor = event.sensor;
+            if (sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+            {
+                updateAccel(
+                        event.timestamp, event.values[0], event.values[1], event.values[2]);
+            }
+            if(event.sensor.getType()==Sensor.TYPE_STEP_COUNTER) {
+                steps = (int) event.values[0];
+            }
             updateIfNecessary();
         }
     }
@@ -185,7 +258,9 @@ public class SensorListener extends Service implements SensorEventListener {
         if (BuildConfig.DEBUG) Logger.log("SensorListener onDestroy");
         try {
             SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-            sm.unregisterListener(this);
+            if(countsensor != null || as != null) {
+                sm.unregisterListener(this);
+            }
         } catch (Exception e) {
             if (BuildConfig.DEBUG) Logger.log(e);
             e.printStackTrace();
@@ -224,7 +299,7 @@ public class SensorListener extends Service implements SensorEventListener {
                             getString(R.string.notification_title)).setContentIntent(PendingIntent
                     .getActivity(this, 0, new Intent(this, Activity_Main.class),
                             PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setSmallIcon(R.drawable.ic_notification)
+                    .setSmallIcon(R.drawable.app_icon)
                     .addAction(isPaused ? R.drawable.ic_resume : R.drawable.ic_pause,
                             isPaused ? getString(R.string.resume) : getString(R.string.pause),
                             PendingIntent.getService(this, 4, new Intent(this, SensorListener.class)
@@ -252,8 +327,22 @@ public class SensorListener extends Service implements SensorEventListener {
             Logger.log("default: " + sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER).getName());
         }
 
-        // enable batching with delay of max 5 min
-        sm.registerListener(this, sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER),
-                SensorManager.SENSOR_DELAY_NORMAL, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+        countsensor= sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        if(countsensor!=null)
+        {
+            sm.registerListener(this, countsensor,  SensorManager.SENSOR_DELAY_NORMAL, (int) (5 * MICROSECONDS_IN_ONE_MINUTE));
+        }
+        else
+        {
+            as=sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            if(as!=null)
+            {
+                sm.registerListener(this, as, SensorManager.SENSOR_DELAY_FASTEST);
+            }
+            else
+            {
+                Log.e("sensor", "unavailable");
+            }
+        }
     }
 }

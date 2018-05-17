@@ -47,7 +47,6 @@
     <string name="total_this_month">Total mensuel</string>
     <string name="average_this_month">Moyenne mensuelle</string>
     <string name="file_already_exists">Ce fichier existe déjà. Etes-vous sûr de vouloir l\'écraser?</string>
-    <string name="about_text_links">Cette application est créée par Thomas Hoffmann (<a href="https://www.j4velin.de">www.j4velin.de</a>) and utilise <a href="https://github.com/blackfizz/EazeGraph">EazeGraph</a> par Paul Cech et <a href="https://github.com/attenzione/android-ColorPickerPreference">ColorPickerPreference</a> par Sergey Margaritov.\n\nPodomètre est open source! Récupérez le code and toute la liste des contributeurs sur <a href="https://github.com/j4velin/Pedometer">GitHub</a>.\n\n</string>
     <string name="about_app_version">Version: %s</string>
     <string name="since">Depuis %s</string>
     <string name="start">Départ</string>

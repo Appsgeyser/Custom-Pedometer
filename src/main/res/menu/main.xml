@@ -1,38 +1,36 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/action_pause"
         android:orderInCategory="100"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/pause"/>
+        android:title="@string/pause"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_achievements"
+        android:orderInCategory="100"
+        android:title="@string/achievements"
+        android:icon="@drawable/trophy"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/settings"/>
+
     <item
-        android:id="@+id/action_achievements"
+        android:id="@+id/tips"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/achievements"/>
-    <item
-        android:id="@+id/action_leaderboard"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/leaderboard"/>
-    <item
-        android:id="@+id/action_faq"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/faq"/>
+        android:title="@string/useful_tips"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_split_count"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/split_count"/>
+        android:title="@string/split_count"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_about"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/about"/>
+        android:title="@string/about"
+        app:showAsAction="never" />
 
 </menu>

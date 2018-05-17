@@ -5,15 +5,29 @@
                 android:padding="5dp"
                 tools:context=".Activity_Main">
 
-    <org.eazegraph.lib.charts.PieChart
-        xmlns:eaze="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/graph"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="10dp"
-        eaze:egLegendHeight="0dp"
-        eaze:egInnerPadding="75"
-        eaze:egHighlightStrength="1"/>
+        android:id="@+id/graphPanel">
+
+        <org.eazegraph.lib.charts.PieChart
+            xmlns:eaze="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            eaze:egLegendHeight="0dp"
+            eaze:egInnerPadding="75"
+            eaze:egHighlightStrength="1"
+            android:visibility="gone"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/mpPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+    </FrameLayout>
+
 
     <TextView
         android:id="@+id/steps"
@@ -38,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/graph"
+        android:layout_below="@+id/graphPanel"
         android:layout_marginTop="20dp">
 
         <TextView
@@ -71,6 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
+            android:id="@+id/averageLabel"
             android:text="@string/average"/>
 
         <TextView
@@ -78,17 +93,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:text="@string/total"/>
+            android:text="@string/total"
+            android:id="@+id/totalLabel"/>
     </LinearLayout>
 
-    <org.eazegraph.lib.charts.BarChart
-        xmlns:eaze="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/bargraph"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_below="@+id/averageandtotaltext"
-        android:layout_marginTop="50dp"
-        eaze:egLegendHeight="35dp"
-        eaze:egShowValues="true"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/averageandtotal">
+
+        <include layout="@layout/steps_chart"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="@string/dataNotice"
+            android:id="@+id/dataNotice"/>
+    </FrameLayout>
 
 </RelativeLayout>
